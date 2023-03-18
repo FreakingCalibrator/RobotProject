@@ -1,6 +1,6 @@
-import cv2
+'''import cv2
 import numpy as np
-import imutils
+#import imutils
 
 # cv2.namedWindow("preview")
 cap = cv2.VideoCapture(0)
@@ -39,4 +39,54 @@ while True:
             break
     except ValueError:
         pass
-    cv2.imshow("result", img_orig)
+    cv2.imshow("result", img_orig)'''
+
+import cv2
+import numpy as np
+import imutils
+
+class ColorDetect:
+    def __init__(self,lowColor,highColor):
+        self.lowColor=low_red
+        self.highColor=high_red
+        cap = cv2.VideoCapture(0)
+
+    def Level1(self):
+            success, img_orig = cap.read()
+            img=img_orig.copy()
+            img = cv2.inRange(img, self.highColor,self.lowColor)
+            img=cv2.Canny(img,50,150)
+            kernel=np.ones((13,13),np.uint8)
+            img=cv2.dilate(img,kernel,iterations=2)
+            return img,img_orig
+class DetectDirt(ColorDetect):
+    def DetectDirt(self):
+        try:
+            cont=cv2.findContours(img,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+            cont=imutils.grab_contours(cont)
+            cont=sorted(cont,key=cv2.contourArea,reverse=True)[:2]
+            pos=None
+            ymin =None
+            for c in cont:
+                    approx=cv2.approxPolyDP(c,19,True)
+                    if len(approx)==4:
+                        pos=approx
+                        break
+                    # минимальные значения
+            try:
+                xmax,ymax,xmin,ymin=[],[],[],[]
+                xmax=max([pos[i][0][0] for i in range(0,4)])#.max()
+                        #xmax=pos[:][0][0].shape#.max()
+                        #print(xmax)
+                ymax = max([pos[i][0][1] for i in range(0, 4)])#.max()
+                xmin=min([pos[i][0][0] for i in range(0, 4)])#.min()
+                ymin = min([pos[i][0][1] for i in range(0, 4)])#.min()
+                img_orig=cv2.rectangle(img_orig,(xmin,ymin),(xmax,ymax),(0,0,255),2)
+            except:
+                pass
+            cv2.imshow("result", img_orig)
+        except ValueError:
+            pass
+        return (xmin,ymin),(xmax,ymax)
+red=ColorTransportDetect((59, 0, 255),(114, 0, 255))
+xr,yr=red.detect()
